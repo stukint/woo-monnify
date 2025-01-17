@@ -144,7 +144,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 *
 	 * @var array
 	 */
-	public $payment_channels = array();
+	public $payment_methods = array();
 
     /**
 	 * Constructor

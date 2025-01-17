@@ -38,9 +38,28 @@ jQuery( function( $ ) {
 
             $( '#woocommerce_monnify_testmode' ).change();
 
-            //Toogle bank filter setting.
-
             //Toogle secret
+            $( '#woocommerce_monnify_test_secret_key, #woocommerce_monnify_live_secret_key' ).after(
+				'<button class="wc-monnify-toggle-secret" style="height: 30px; margin-left: 2px; cursor: pointer"><span class="dashicons dashicons-visibility"></span></button>'
+			);
+
+            $( '.wc-monnify-toggle-secret' ).on( 'click', function( event ) {
+				event.preventDefault();
+
+				let $dashicon = $( this ).closest( 'button' ).find( '.dashicons' );
+				let $input = $( this ).closest( 'tr' ).find( '.input-text' );
+				let inputType = $input.attr( 'type' );
+
+				if ( 'text' == inputType ) {
+					$input.attr( 'type', 'password' );
+					$dashicon.removeClass( 'dashicons-hidden' );
+					$dashicon.addClass( 'dashicons-visibility' );
+				} else {
+					$input.attr( 'type', 'text' );
+					$dashicon.removeClass( 'dashicons-visibility' );
+					$dashicon.addClass( 'dashicons-hidden' );
+				}
+			} );
             
         }
     }
