@@ -48,6 +48,13 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 */
 	public $test_contract_code;
 
+	/**
+	 * Monnify test API URL.
+	 *
+	 * @var string
+	 */
+	public $test_api_url;
+
     /**
 	 * Monnify live api key.
 	 *
@@ -69,6 +76,13 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 */
 	public $live_contract_code;
 
+	/**
+	 * Monnify test API URL.
+	 *
+	 * @var string
+	 */
+	public $live_api_url;
+
     /**
 	 * Should we save customer cards?
 	 *
@@ -77,95 +91,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	public $saved_cards;
 
     /**
-	 * Should Monnify split payment be enabled.
-	 *
-	 * @var bool
-	 */
-	public $split_payment;
-
-    /**
 	 * Should the cancel & remove order button be removed on the pay for order page.
 	 *
 	 * @var bool
 	 */
 	public $remove_cancel_order_button;
-
-    /**
-	 * Monnify sub account code.
-	 *
-	 * @var string
-	 */
-	public $subaccount_code;
-
-    /**
-	 * Who bears Monnify charges?
-	 *
-	 * @var string
-	 */
-	public $charges_account;
-
-    /**
-	 * A flat fee to charge the sub account for each transaction.
-	 *
-	 * @var string
-	 */
-	public $transaction_charges;
-
-    /**
-	 * Should custom metadata be enabled?
-	 *
-	 * @var bool
-	 */
-	public $custom_metadata;
-
-    /**
-	 * Should the order id be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_order_id;
-
-    /**
-	 * Should the customer name be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_name;
-
-    /**
-	 * Should the billing email be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_email;
-
-    /**
-	 * Should the billing phone be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_phone;
-
-    /**
-	 * Should the billing address be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_billing_address;
-
-	/**
-	 * Should the shipping address be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_shipping_address;
-
-	/**
-	 * Should the order items be sent as a custom metadata to Monnify?
-	 *
-	 * @var bool
-	 */
-	public $meta_products;
 
 	/**
 	 * API public key
@@ -180,6 +110,27 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * @var string
 	 */
 	public $secret_key;
+
+	/**
+	 * Contract Code
+	 *
+	 * @var string
+	 */
+	public $contract_code;
+
+	/**
+	 * SDK URL
+	 *
+	 * @var string
+	 */
+	public $sdk_url;
+
+	/**
+	 * API URL
+	 *
+	 * @var string
+	 */
+	public $api_url;
 
 	/**
 	 * Gateway disabled message
@@ -227,7 +178,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		// Load the settings
 		$this->init_settings();
 
-        // Get setting values
+        // Get settings values
         $this->title              = $this->get_option( 'title' );
 		$this->description        = $this->get_option( 'description' );
 		$this->enabled            = $this->get_option( 'enabled' );
@@ -244,24 +195,15 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
         $this->saved_cards = $this->get_option( 'saved_cards' ) === 'yes' ? true : false;
 
-		$this->split_payment              = $this->get_option( 'split_payment' ) === 'yes' ? true : false;
 		$this->remove_cancel_order_button = $this->get_option( 'remove_cancel_order_button' ) === 'yes' ? true : false;
-		$this->subaccount_code            = $this->get_option( 'subaccount_code' );
-		$this->charges_account            = $this->get_option( 'split_payment_charge_account' );
-		$this->transaction_charges        = $this->get_option( 'split_payment_transaction_charge' );
-
-		$this->custom_metadata = $this->get_option( 'custom_metadata' ) === 'yes' ? true : false;
-
-		$this->meta_order_id         = $this->get_option( 'meta_order_id' ) === 'yes' ? true : false;
-		$this->meta_name             = $this->get_option( 'meta_name' ) === 'yes' ? true : false;
-		$this->meta_email            = $this->get_option( 'meta_email' ) === 'yes' ? true : false;
-		$this->meta_phone            = $this->get_option( 'meta_phone' ) === 'yes' ? true : false;
-		$this->meta_billing_address  = $this->get_option( 'meta_billing_address' ) === 'yes' ? true : false;
-		$this->meta_shipping_address = $this->get_option( 'meta_shipping_address' ) === 'yes' ? true : false;
-		$this->meta_products         = $this->get_option( 'meta_products' ) === 'yes' ? true : false;
 
         $this->api_key = $this->testmode ? $this->test_api_key : $this->live_api_key;
         $this->secret_key = $this->testmode ? $this->test_secret_key : $this->live_secret_key;
+		$this->contract_code = $this->testmode ? $this->test_contract_code : $this->live_contract_code;
+
+		$this->sdk_url = 'https://sdk.monnify.com';
+		$this->test_api_url = 'https://sandbox.monnify.com';
+		$this->live_api_url = 'https://api.monnify.com';
 
         // Hooks
 		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
@@ -277,5 +219,318 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		);
 
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+
+		// Payment listener/API hook.
+		add_action( 'woocommerce_api_wc_gateway_monnify', array( $this, 'verify_monnify_transaction' ) );
+
+		// Webhook listener/API hook.
+		add_action( 'woocommerce_api_nts_wc_monnify_webhook', array( $this, 'process_webhooks' ) );
+
+		// Check if the gateway can be used.
+		if ( ! $this->is_valid_for_use() ) {
+			$this->enabled = false;
+		}
     }
+
+	/**
+	 * Check if this gateway is enabled and available in the user's country.
+	 */
+	public function is_valid_for_use() {
+		if ( ! in_array( get_woocommerce_currency(), apply_filters( 'woocommerce_monnify_supported_currencies', array( 'NGN', 'GHS' ) ) ) ) {
+			$this->msg = sprintf( __( 'Monnify does not support your store currency. Kindly set it to either NGN (&#8358) or GHS (&#x20b5;) <a href="%s">here</a>', 'woo-monnify' ), admin_url( 'admin.php?page=wc-settings&tab=general' ) );	
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Display monnify payment icon.
+	 */
+	public function get_icon() {
+		$icon = '<img src="' . WC_HTTPS::force_https_url( plugins_url( 'assets/images/monnify.png', WC_MONNIFY_MAIN_FILE ) ) . '" alt="Monnify Payment Options" />';
+
+		return apply_filters( 'woocommerce_gateway_icon', $icon, $this->id );
+	}
+
+	/**
+	 * Check if Monnify merchant details is filled.
+	 */
+	public function admin_notices() {
+		
+		if ( $this->enabled == 'no' ) {
+			return;
+		}
+
+		// Check required fields.
+		if ( ! ( $this->api_key && $this->secret_key ) ) {
+			echo '<div class="error"><p>' . sprintf( __( 'Please enter your Monnify merchant details <a href="%s">here</a> to be able to use the Monnify WooCommerce plugin.', 'woo-monnify' ), admin_url( 'admin.php?page=wc-settings&tab=checkout&section=monnify' ) ) . '</p></div>';
+			return;
+		}
+	}
+
+	/**
+	 * Check if Monnify gateway is enabled.
+	 *
+	 * @return bool
+	 */
+	public function is_available() {
+
+		if ( 'yes' == $this->enabled ) {
+
+			if ( ! ( $this->api_key && $this->secret_key ) ) {
+
+				return false;
+
+			}
+
+			return true;
+
+		}
+
+		return false;
+
+	}
+
+	/**
+	 * Admin Panel Options.
+	 */
+	public function admin_options() {
+
+		?>
+
+		<h2><?php _e('Monnify', 'woo-monnify'); ?>
+		<?php 
+			if ( function_exists( 'wc_back_link' ) ) {
+				wc_back_link( __( 'Return to payments', 'woo-monnify' ), admin_url( 'admin.php?page=wc-settings&tab=checkout' ) );
+			}
+		?>
+		</h2>
+
+		<h4>
+			<strong><?php printf( __( 'Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'woo-monnify' ), 'https://app.monnify.com/developer#webhook-urls', WC()->api_request_url( 'nts_wc_monnify_webhook' ) ); ?></strong>
+		</h4>
+		
+		<?php
+
+		if ( $this->is_valid_for_use() ) {
+
+			echo '<table class="form-table">';
+			$this->generate_settings_html();
+			echo '</table>';
+
+		} else { 
+			?>
+			<div class="inline error"><p><strong><?php _e( 'Monnify Payment Gateway Disabled', 'woo-monnify' ); ?></strong>: <?php echo $this->msg; ?></p></div>
+			<?php
+		}
+
+	}
+
+	/**
+	 * Initialise Gateway Settings Form Fields.
+	 */
+	public function init_form_fields() {
+
+		$form_fields = array(
+			'enabled' => array(
+				'title'       => __( 'Enable/Disable', 'woo-monnify' ),
+				'label'       => __( 'Enable Monnify', 'woo-monnify' ),
+				'type'        => 'checkbox',
+				'description' => __( 'Enable Monnify as a payment option on the checkout page.', 'woo-monnify' ),
+				'default'     => 'no',
+				'desc_tip'    => true
+			),
+			'title' => array(
+				'title'       => __( 'Title', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'This controls the payment method title which the user sees during checkout.', 'woo-monnify' ),
+				'default'     => __( 'Debit/Credit Cards', 'woo-monnify' ),
+				'desc_tip'    => true
+			),
+			'description' => array(
+				'title'       => __( 'Description', 'woo-monnify' ),
+				'type'        => 'textarea',
+				'description' => __( 'This controls the payment method description which the user sees during checkout.', 'woo-monnify' ),
+				'default'     => __( 'Make payment using your debit and credit cards', 'woo-monnify' ),
+				'desc_tip'    => true
+			),
+			'testmode' => array(
+				'title'       => __( 'Test mode', 'woo-monnify' ),
+				'label'       => __( 'Enable Test Mode', 'woo-monnify' ),
+				'type'        => 'checkbox',
+				'description' => __( 'Test mode enables you to test payments before going live. <br />Once the LIVE MODE is enabled on your Monnify account uncheck this.', 'woo-monnify' ),
+				'default'     => 'yes',
+				'desc_tip'    => true
+			),
+			'payment_page' => array(
+				'title'       => __( 'Payment Option', 'woo-monnify' ),
+				'type'        => 'select',
+				'description' => __( 'SDK shows the payment popup on the page while Redirect will redirect the customer to Monnify to make payment.', 'woo-monnify' ),
+				'default'     => '',
+				'desc_tip'    => false,
+				'options'     => array(
+					''          => __( 'Select One', 'woo-monnify' ),
+					'inline'    => __( 'SDK', 'woo-monnify' ),
+					'redirect'  => __( 'Redirect', 'woo-monnify' )
+				)
+			),
+			'test_secret_key' => array(
+				'title'       => __( 'Test Secret Key', 'woo-monnify' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your Test Secret Key here', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'test_api_key' => array(
+				'title'       => __( 'Test API Key', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'Enter your Test API Key here.', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'test_contract_code' => array(
+				'title'       => __( 'Test Contract Code', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'Enter your Test Contract Code here.', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'live_secret_key' => array(
+				'title'       => __( 'Live Secret Key', 'woo-monnify' ),
+				'type'        => 'password',
+				'description' => __( 'Enter your Live Secret Key here', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'live_api_key' => array(
+				'title'       => __( 'Live API Key', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'Enter your Live API Key here.', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'live_contract_code' => array(
+				'title'       => __( 'Live Contract Code', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'Enter your Live Contract Code here.', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'autocomplete_order' => array(
+				'title'       => __( 'Autocomplete Order After Payment', 'woo-monnify' ),
+				'label'       => __( 'Autocomplete Order', 'woo-monnify' ),
+				'type'        => 'checkbox',
+				'class'       => 'wc-monnify-autocomplete-order',
+				'description' => __( 'If enabled, the order will be marked as complete after successful payment', 'woo-monnify' ),
+				'default'     => 'no',
+				'desc_tip'    => true
+			),
+			'remove_cancel_order_button' => array(
+				'title'       => __( 'Remove Cancel Order & Restore Cart Button', 'woo-monnify' ),
+				'label'       => __( 'Remove the cancel order & restore cart button on the pay for order page', 'woo-monnify' ),
+				'type'        => 'checkbox',
+				'description' => '',
+				'default'     => 'no'
+			),
+			'custom_gateways' => array(
+				'title'       => __( 'Additional Monnify Gateways', 'woo-monnify' ),
+				'type'        => 'select',
+				'description' => __( 'Create additional custom Monnify based gateways. This allows you to create additional Monnify gateways for different payment methods.', 'woo-monnify' ),
+				'default'     => '',
+				'desc_tip'    => true,
+				'options'     => array(
+					''  => __( 'Select One', 'woo-monnify' ),
+					'1' => __( '1 gateway', 'woo-monnify' ),
+					'2' => __( '2 gateways', 'woo-monnify' ),
+					'3' => __( '3 gateways', 'woo-monnify' ),
+					'4' => __( '4 gateways', 'woo-monnify' ),
+					'5' => __( '5 gateways', 'woo-monnify' )
+				)
+			),
+			'saved_cards' => array(
+				'title'       => __( 'Saved Cards', 'woo-monnify' ),
+				'label'       => __( 'Enable Payment via Saved Cards', 'woo-monnify' ),
+				'type'        => 'checkbox',
+				'description' => __( 'If enabled, users will be able to pay with a saved card during checkout. Card details are saved on Monnify servers, not on your store.<br>Note that you need to have a valid SSL certificate installed.', 'woo-monnify' ),
+				'default'     => 'no',
+				'desc_tip'    => true
+			)
+		);
+
+		if ( 'NGN' !== get_woocommerce_currency() ) {
+			unset( $form_fields['custom_gateways'] );
+		}
+
+		$this->form_fields = $form_fields;
+	}
+
+	/**
+	 * Payment form on checkout page
+	 */
+	public function payment_fields() {
+
+		if ( $this->description ) {
+			echo wpautop( wptexturize( $this->description ) );
+		}
+
+		if ( ! is_ssl() ) {
+			return;
+		}
+
+		if ( $this->supports( 'tokenization' ) && is_checkout() && $this->saved_cards && is_user_logged_in() ) {
+			$this->tokenization_script();
+			$this->saved_payment_methods();
+			$this->save_payment_method_checkbox();
+		}
+
+	}
+
+
+
+	/**
+	 * Outputs scripts used for monnify payment.
+	 */
+	public function payment_scripts() {
+		//write the code
+	}
+
+	/**
+	 * Load admin scripts.
+	 */
+	public function admin_scripts() {
+		
+		if ( 'woocommerce_page_wc-settings' !== get_current_screen()->id ) {
+			return;
+		}
+
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		$monnify_admin_params = array(
+			'plugin_url' => WC_MONNIFY_URL,
+		);
+
+		wp_enqueue_script( 'wc_monnify_admin', plugins_url('assets/js/monnify-admin' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array(), WC_MONNIFY_VERSION, true);
+
+		wp_localize_script( 'wc_monnify_admin', 'wc_monnify_admin_params', $monnify_admin_params );
+		
+	}
+
+	/**
+	 * Displays the payment page.
+	 *
+	 * @param $order_id
+	 */
+	public function receipt_page( $order_id ) {
+		//write the code
+	}
+
+	/**
+	 * Verify Monnify payment.
+	 */
+	public function verify_monnify_transaction() {
+		//write the code
+	}
+
+	/**
+	 * Process Webhook.
+	 */
+	public function process_webhooks() {
+		//write the code
+	}
 }

@@ -50,6 +50,9 @@ function nts_wc_monnify_init() {
 
 	require_once __DIR__ . '/includes/custom-gateways/gateway-one/class-wc-gateway-monnify-one.php';
 	require_once __DIR__ . '/includes/custom-gateways/gateway-two/class-wc-gateway-monnify-two.php';
+	require_once __DIR__ . '/includes/custom-gateways/gateway-three/class-wc-gateway-monnify-three.php';
+	require_once __DIR__ . '/includes/custom-gateways/gateway-four/class-wc-gateway-monnify-four.php';
+	require_once __DIR__ . '/includes/custom-gateways/gateway-five/class-wc-gateway-monnify-five.php';
 
 	add_filter( 'woocommerce_payment_gateways', 'nts_wc_add_monnify_gateway', 99 );
 
@@ -92,6 +95,27 @@ function nts_wc_add_monnify_gateway( $methods ) {
 		$custom_gateways = isset( $settings['custom_gateways'] ) ? $settings['custom_gateways'] : '';
 
 		switch ( $custom_gateways ) {
+			case '5':
+				$methods[] = 'WC_Gateway_Monnify_One';
+				$methods[] = 'WC_Gateway_Monnify_Two';
+				$methods[] = 'WC_Gateway_Monnify_Three';
+				$methods[] = 'WC_Gateway_Monnify_Four';
+				$methods[] = 'WC_Gateway_Monnify_Five';
+				break;
+			
+			case '4':
+				$methods[] = 'WC_Gateway_Monnify_One';
+				$methods[] = 'WC_Gateway_Monnify_Two';
+				$methods[] = 'WC_Gateway_Monnify_Three';
+				$methods[] = 'WC_Gateway_Monnify_Four';
+				break;
+			
+			case '3':
+				$methods[] = 'WC_Gateway_Monnify_One';
+				$methods[] = 'WC_Gateway_Monnify_Two';
+				$methods[] = 'WC_Gateway_Monnify_Three';
+				break;
+
 			case '2':
 				$methods[] = 'WC_Gateway_Monnify_One';
 				$methods[] = 'WC_Gateway_Monnify_Two';
@@ -178,12 +202,18 @@ add_action(
 // 		require_once __DIR__ . '/includes/custom-gateways/class-wc-gateway-custom-monnify-blocks-support.php';
 // 		require_once __DIR__ . '/includes/custom-gateways/gateway-one/class-wc-gateway-monnify-one-blocks-support.php';
 // 		require_once __DIR__ . '/includes/custom-gateways/gateway-two/class-wc-gateway-monnify-two-blocks-support.php';
+// 		require_once __DIR__ . '/includes/custom-gateways/gateway-three/class-wc-gateway-monnify-three-blocks-support.php';
+// 		require_once __DIR__ . '/includes/custom-gateways/gateway-four/class-wc-gateway-monnify-four-blocks-support.php';
+// 		require_once __DIR__ . '/includes/custom-gateways/gateway-five/class-wc-gateway-monnify-five-blocks-support.php';
 // 		add_action(
 // 			'woocommerce_blocks_payment_method_type_registration',
 // 			static function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ){
 // 				$payment_method_registry->register( new WC_Gateway_Monnify_Blocks_Support() );
 // 				$payment_method_registry->register( new WC_Gateway_Monnify_One_Blocks_Support() );
 // 				$payment_method_registry->register( new WC_Gateway_Monnify_Two_Blocks_Support() );
+// 				$payment_method_registry->register( new WC_Gateway_Monnify_Three_Blocks_Support() );
+// 				$payment_method_registry->register( new WC_Gateway_Monnify_Four_Blocks_Support() );
+// 				$payment_method_registry->register( new WC_Gateway_Monnify_Five_Blocks_Support() );
 // 			}
 // 		);
 // 	}
