@@ -505,7 +505,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			'plugin_url' => WC_MONNIFY_URL,
 		);
 
-		wp_enqueue_script( 'wc_monnify_admin', plugins_url('assets/js/monnify-admin' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array(), WC_MONNIFY_VERSION, true);
+		//wp_enqueue_script( 'wc_monnify_admin', plugins_url('assets/js/monnify-admin' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array(), WC_MONNIFY_VERSION, true);
+		wp_enqueue_script( 'wc_monnify_admin', plugins_url('assets/js/monnify-admin' . '.js', WC_MONNIFY_MAIN_FILE ), array(), WC_MONNIFY_VERSION, true);
 
 		wp_localize_script( 'wc_monnify_admin', 'wc_monnify_admin_params', $monnify_admin_params );
 		
