@@ -512,12 +512,35 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	}
 
 	/**
+	 * Show new card can only be added when placing an order notice.
+	 */
+	public function add_payment_method() {
+
+		wc_add_notice( __( 'You can only add a new card when placing an order.', 'woo-monnify' ), 'error' );
+
+		return;
+
+	}
+	
+	/**
 	 * Displays the payment page.
 	 *
 	 * @param $order_id
 	 */
 	public function receipt_page( $order_id ) {
-		//write the code
+		$order = wc_get_order( $order_id );
+
+		echo '<div id="wc-monnify-form">';
+
+		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with Monnify.', 'woo-monnify' ) . '</p>';
+
+		echo '<div id="monnify_form"><form id="order_review" method="post" action="' . WC()->api_request_url( 'WC_Gateway_Monnify' ) . '"></form><button class="button" id="monnify-payment-button">' . __( 'Pay Now', 'woo-monnify' ) . '</button>';
+
+		if ( ! $this->remove_cancel_order_button ) {
+			echo '  <a class="button cancel" id="monnify-cancel-payment-button" href="' . esc_url( $order->get_cancel_order_url() ) . '">' . __( 'Cancel order &amp; restore cart', 'woo-monnify' ) . '</a></div>';
+		}
+
+		echo '</div>';
 	}
 
 	/**
