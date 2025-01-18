@@ -82,6 +82,7 @@ jQuery( function( $ ) {
             customerEmail: wc_monnify_params.customerEmail,
             apiKey: wc_monnify_params.apiKey,
             contractCode: wc_monnify_params.contractCode,
+            paymentDescription: wc_monnify_params.paymentDescription,
             onLoadStart: ()=>{
                 console.log('Monnify SDK has started loading');
             },

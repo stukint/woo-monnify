@@ -526,6 +526,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$customer_name = $first_name . ' ' . $last_name;
 			$amount        = $order->get_total();
 			$txnref        = 'MNFY_' . $order_id . '_' . time();
+			$site_name     = get_option( 'blogname' );
+			$payment_descr = 'Payment for ' . $site_name . ' #' . $order_id;
 			$the_order_id  = $order->get_id();
 			$the_order_key = $order->get_order_key();
 			$currency      = $order->get_currency();
@@ -537,6 +539,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				$monnify_params['reference'] = $txnref;
 				$monnify_params['customerFullName'] = $customer_name;
 				$monnify_params['customerEmail'] = $email;
+				$monnify_params['paymentDescription'] = $payment_descr;
 
 			}
 
