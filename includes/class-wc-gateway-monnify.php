@@ -582,7 +582,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * @return array|void
 	 */
 	public function process_payment( $order_id ) {
-
+		//Token payment logic not coded because card payments dont work
 		$order = wc_get_order( $order_id );
 
 		if ( 'redirect' === $this->payment_page ) {
@@ -664,7 +664,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * Verify Monnify payment.
 	 */
 	public function verify_monnify_transaction() {
-		//write the code
+		var_dump($_REQUEST);
 	}
 
 	/**
