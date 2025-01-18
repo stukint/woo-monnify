@@ -719,7 +719,12 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		$request = wp_remote_post($token_url, $args);
 
-		error_log(print_r($request, true));
+		if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
+			$response = json_decode( wp_remote_retrieve_body($request) );
+			return $response['accessToken'];
+		}
+
+		return false;
 
 	}
 
@@ -733,27 +738,34 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 */
 	private function get_monnify_transaction( $monnify_txn_ref ) {
 
-		$this->get_monnify_access_token();
-		
-		// $monnify_url = $this->api_url . '/api/v2/transactions/' . urlencode( $monnify_txn_ref );
+		$access_token = $this->get_monnify_access_token();
 
-		// $headers = array(
-		// 	'Authorization' => 'Bearer ' . $this->secret_key,
-		// );
+		if ( $access_token ){
 
-		// $args = array(
-		// 	'headers' => $headers,
-		// 	'timeout' => 60,
-		// );
+			$monnify_url = $this->api_url . '/api/v2/transactions/' . urlencode( $monnify_txn_ref );
 
-		// $request = wp_remote_get($monnify_url, $args);
+			$headers = array(
+				'Authorization' => 'Bearer ' . $access_token,
+			);
 
+			$args = array(
+				'headers' => $headers,
+				'timeout' => 60,
+			);
 
-		// if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
-		// 	return json_decode( wp_remote_retrieve_body($request) );
-		// }
+			$request = wp_remote_get($monnify_url, $args);
 
-		// return false;
+			error_log(print_r($request, true));
+
+			if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
+				return json_decode( wp_remote_retrieve_body($request) );
+			}
+
+			return false;
+
+		}
+
+		return false;
 
 	}
 
