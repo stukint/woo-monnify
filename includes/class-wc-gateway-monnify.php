@@ -704,8 +704,12 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		$token_url = $this->api_url . '/api/v1/auth/login';
 
+		$token_string = 'apiKey:' . $this->secret_key;
+
+		$token_encode = base64_encode($token_string);
+
 		$headers = array(
-			'Authorization' => 'Basic base64(ApiKey:' . $this->secret_key . ')'
+			'Authorization' => 'Basic ' . $token_encode
 		);
 
 		$args = array(
