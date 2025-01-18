@@ -487,7 +487,85 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * Outputs scripts used for monnify payment.
 	 */
 	public function payment_scripts() {
-		//write the code
+		
+		if ( isset( $_GET['pay_for_order'] ) || ! is_checkout_pay_page() ) {
+			return;
+		}
+
+		if ( $this->enabled === 'no' ) {
+			return;
+		}
+
+		$order_key = urldecode( $_GET['key'] );
+		$order_id  = absint( get_query_var( 'order-pay' ) );
+
+		$order = wc_get_order( $order_id );
+
+		if ( $this->id !== $order->get_payment_method() ) {
+			return;
+		}
+
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+		wp_enqueue_script( 'jquery' );
+
+		wp_enqueue_script('monnify', $this->sdk_url . '/plugin/monnify.js', array( 'jquery' ), WC_MONNIFY_VERSION, false );
+
+		wp_enqueue_script( 'wc_monnify', plugins_url( 'assets/js/monnify' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array( 'jquery', 'monnify' ), WC_MONNIFY_VERSION, false );
+
+		$monnify_params = array(
+			'apiKey' => $this->api_key,
+			'contractCode' => $this->contract_code
+		);
+
+		if ( is_checkout_pay_page() && get_query_var( 'order-pay' ) ) {
+
+			$email         = $order->get_billing_email();
+			$first_name	   = $order->get_billing_first_name();
+			$last_name	   = $order->get_billing_last_name();
+			$customer_name = $first_name . ' ' . $last_name;
+			$amount        = $order->get_total();
+			$txnref        = 'MNFY_' . $order_id . '_' . time();
+			$the_order_id  = $order->get_id();
+			$the_order_key = $order->get_order_key();
+			$currency      = $order->get_currency();
+
+			if ( $the_order_id == $order_id && $the_order_key == $order_key ) {
+
+				$monnify_params['amount'] = $amount;
+				$monnify_params['currency'] = $currency;
+				$monnify_params['reference'] = $txnref;
+				$monnify_params['customerFullName'] = $customer_name;
+				$monnify_params['customerEmail'] = $email;
+
+			}
+
+			$order->update_meta_data('_monnify_txn_ref', $txnref);
+			$order->save();
+		}
+
+		$payment_methods = $this->get_gateway_payment_methods( $order );
+
+		if ( !empty( $payment_methods ) ){
+			if ( in_array( 'CARD', $payment_methods, true ) ){
+				$monnify_params['card_method'] = 'true';
+			}
+
+			if ( in_array( 'ACCOUNT_TRANSFER', $payment_methods, true ) ){
+				$monnify_params['account_transfer_method'] = 'true';
+			}
+
+			if ( in_array( 'USSD', $payment_methods, true ) ){
+				$monnify_params['ussd_method'] = 'true';
+			}
+
+			if ( in_array( 'PHONE_NUMBER', $payment_methods, true ) ){
+				$monnify_params['phone_number_method'] = 'true';
+			}
+		}
+
+		wp_localize_script( 'wc_monnify', 'wc_monnify_params', $monnify_params );
+
 	}
 
 	/**
@@ -556,4 +634,31 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	public function process_webhooks() {
 		//write the code
 	}
+
+	/**
+	 * Retrieve the payment channels configured for the gateway
+	 *
+	 * @since 5.7
+	 * @param WC_Order $order Order object.
+	 * @return array
+	 */
+	protected function get_gateway_payment_methods( $order ) {
+		$payment_methods = $this->payment_methods;
+		if ( empty( $payment_methods ) && ( 'monnify' !== $order->get_payment_method() )){
+			$payment_methods = array('CARD');
+		}
+
+		/**
+		 * Filter the list of payment methods.
+		 *
+		 * @param array $payment_methods A list of payment methods.
+		 * @param string $id Payment method ID.
+		 * @param WC_Order $order Order object.
+		 * @since 5.8.2
+		 */
+		return apply_filters( 'wc_monnify_payment_methods', $payment_methods, $this->id, $order );
+
+	}
+
+	
 }
