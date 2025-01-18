@@ -682,7 +682,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			$monnify_response = $this->get_monnify_transaction( $monnify_txn_ref );
 
-			wc_get_logger()->debug( json_decode($monnify_response), array( 'source' => 'TXN RESPONSE' ) );
+			echo $monnify_response;
 
 		}
 
@@ -721,9 +721,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		$request = wp_remote_get($monnify_url, $args);
 
-		$response = wp_remote_retrieve_body($request);
-
-		wc_get_logger()->debug( json_decode($response), array( 'source' => 'Verify Request' ) );
 
 		if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
 			return json_decode( wp_remote_retrieve_body($request) );
