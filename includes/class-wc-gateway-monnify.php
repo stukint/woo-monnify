@@ -672,7 +672,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		} else {
 			$monnify_txn_ref = false;
 		}
-		var_dump($monnify_txn_ref);
+		return var_dump($_REQUEST);
 	}
 
 	/**
