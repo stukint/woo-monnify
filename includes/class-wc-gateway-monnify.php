@@ -311,7 +311,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		</h2>
 
 		<h4>
-			<strong><?php printf( __( 'Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'woo-monnify' ), 'https://app.monnify.com/developer#webhook-urls', WC()->api_request_url( 'nts_wc_monnify_webhook' ) ); ?></strong>
+			<strong><?php printf( __( 'Optional: To avoid situations where bad network makes it impossible to verify transactions, set your webhook URL <a href="%1$s" target="_blank" rel="noopener noreferrer">here</a> to the URL below<span style="color: red"><pre><code>%2$s</code></pre></span>', 'woo-monnify' ), 'https://app.monnify.com/developer#webhook-urls', WC()->api_request_url( 'Nts_Wc_Monnify_Webhook' ) ); ?></strong>
 		</h4>
 		
 		<?php
@@ -672,7 +672,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		} else {
 			$monnify_txn_ref = false;
 		}
-		return var_dump($_REQUEST);
+		wc_get_logger()->debug( $_REQUEST, array( 'source' => 'TXN DEBUG' ) );
 	}
 
 	/**
