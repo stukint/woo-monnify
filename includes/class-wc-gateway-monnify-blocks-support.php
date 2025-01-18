@@ -78,7 +78,7 @@ final class WC_Gateway_Monnify_Blocks_Support extends AbstractPaymentMethodType{
 			'title'             => $this->get_setting( 'title' ),
 			'description'       => $this->get_setting( 'description' ),
 			'supports'          => array_filter( $gateway->supports, array( $gateway, 'supports' ) ),
-			'allow_saved_cards' => $gateway->saved_cards && is_user_logged_in(),
+			// 'allow_saved_cards' => $gateway->saved_cards && is_user_logged_in(),
 			'logo_urls'         => array( $payment_gateways['monnify']->get_logo_url() ),
 		);
 	}
