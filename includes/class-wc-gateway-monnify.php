@@ -706,6 +706,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		
 		$monnify_url = $this->api_url . '/api/v2/transactions/' . urlencode( $monnify_txn_ref );
 
+		wc_get_logger()->debug( $monnify_url, array( 'source' => 'Verify Url' ) );
+
 		$headers = array(
 			'Authorization' => 'Bearer ' . $this->secret_key,
 		);
