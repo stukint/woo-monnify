@@ -569,6 +569,37 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	}
 
 	/**
+	 * Process the payment.
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array|void
+	 */
+	public function process_payment( $order_id ) {
+
+		$order = wc_get_order( $order_id );
+
+		if ( 'redirect' === $this->payment_page ) {
+			return $this->process_redirect_payment_option( $order_id );
+		}
+
+		return array(
+			'result'   => 'success',
+			'redirect' => $order->get_checkout_payment_url( true ),
+		);
+
+	}
+	
+	/**
+	 * Process a redirect payment option payment.
+	 *
+	 * @since 5.7
+	 * @param int $order_id
+	 * @return array|void
+	 */
+	public function process_redirect_payment_option( $order_id ) {}
+
+	/**
 	 * Load admin scripts.
 	 */
 	public function admin_scripts() {
