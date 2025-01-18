@@ -660,5 +660,16 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 	}
 
+	/**
+	 * Get Monnify payment icon URL.
+	 */
+	public function get_logo_url() {
+		
+		$url = WC_HTTPS::force_https_url( plugins_url( 'assets/images/monnify.png', WC_MONNIFY_MAIN_FILE ) );
+
+		return apply_filters( 'wc_monnify_gateway_icon_url', $url, $this->id );
+
+	}
+
 	
 }
