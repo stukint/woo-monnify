@@ -199,12 +199,12 @@ add_action(
 function nts_wc_gateway_monnify_woocommerce_block_support() {
 	if ( class_exists( 'Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType' ) ) {
 		require_once __DIR__ . '/includes/class-wc-gateway-monnify-blocks-support.php';
-		require_once __DIR__ . '/includes/custom-gateways/class-wc-gateway-custom-monnify-blocks-support.php';
-		require_once __DIR__ . '/includes/custom-gateways/gateway-one/class-wc-gateway-monnify-one-blocks-support.php';
-		require_once __DIR__ . '/includes/custom-gateways/gateway-two/class-wc-gateway-monnify-two-blocks-support.php';
-		require_once __DIR__ . '/includes/custom-gateways/gateway-three/class-wc-gateway-monnify-three-blocks-support.php';
-		require_once __DIR__ . '/includes/custom-gateways/gateway-four/class-wc-gateway-monnify-four-blocks-support.php';
-		require_once __DIR__ . '/includes/custom-gateways/gateway-five/class-wc-gateway-monnify-five-blocks-support.php';
+		// require_once __DIR__ . '/includes/custom-gateways/class-wc-gateway-custom-monnify-blocks-support.php';
+		// require_once __DIR__ . '/includes/custom-gateways/gateway-one/class-wc-gateway-monnify-one-blocks-support.php';
+		// require_once __DIR__ . '/includes/custom-gateways/gateway-two/class-wc-gateway-monnify-two-blocks-support.php';
+		// require_once __DIR__ . '/includes/custom-gateways/gateway-three/class-wc-gateway-monnify-three-blocks-support.php';
+		// require_once __DIR__ . '/includes/custom-gateways/gateway-four/class-wc-gateway-monnify-four-blocks-support.php';
+		// require_once __DIR__ . '/includes/custom-gateways/gateway-five/class-wc-gateway-monnify-five-blocks-support.php';
 		add_action(
 			'woocommerce_blocks_payment_method_type_registration',
 			static function( Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry $payment_method_registry ){
