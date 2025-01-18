@@ -664,7 +664,15 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * Verify Monnify payment.
 	 */
 	public function verify_monnify_transaction() {
-		var_dump($_REQUEST);
+		
+		if ( isset( $_REQUEST['monnify_txnref'] ) ) {
+			$monnify_txn_ref = sanitize_text_field( $_REQUEST['monnify_txnref'] );
+		} elseif ( isset( $_REQUEST['reference'] ) ) {
+			$monnify_txn_ref = sanitize_text_field( $_REQUEST['reference'] );
+		} else {
+			$monnify_txn_ref = false;
+		}
+		var_dump($monnify_txn_ref);
 	}
 
 	/**
