@@ -713,7 +713,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			'timeout' => 60
 		);
 
-		$request = wp_remote_get($token_url, $args);
+		$request = wp_remote_post($token_url, $args);
 
 		error_log(print_r($request, true));
 
