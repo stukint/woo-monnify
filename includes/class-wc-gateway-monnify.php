@@ -721,7 +721,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
 			$response = json_decode( wp_remote_retrieve_body($request) );
-			return $response;
+			return $response->responseBody->accessToken;
 		}
 
 		return false;
