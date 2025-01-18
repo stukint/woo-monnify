@@ -88,7 +88,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 *
 	 * @var bool
 	 */
-	public $saved_cards;
+	//Disable this for now
+	//public $saved_cards;
 
     /**
 	 * Should the cancel & remove order button be removed on the pay for order page.
@@ -160,7 +161,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
         $this->supports = array(
 			'products',
 			'refunds',
-			'tokenization',
+			// 'tokenization',
 			'subscriptions',
 			'multiple_subscriptions',
 			'subscription_cancellation',
@@ -193,7 +194,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
         $this->live_secret_key = $this->get_option('live_secret_key');
         $this->live_contract_code = $this->get_option('live_contract_code');
 
-        $this->saved_cards = $this->get_option( 'saved_cards' ) === 'yes' ? true : false;
+        //Card payments not working
+		//$this->saved_cards = $this->get_option( 'saved_cards' ) === 'yes' ? true : false;
 
 		$this->remove_cancel_order_button = $this->get_option( 'remove_cancel_order_button' ) === 'yes' ? true : false;
 
@@ -428,34 +430,34 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				'description' => '',
 				'default'     => 'no'
 			),
-			'custom_gateways' => array(
-				'title'       => __( 'Additional Monnify Gateways', 'woo-monnify' ),
-				'type'        => 'select',
-				'description' => __( 'Create additional custom Monnify based gateways. This allows you to create additional Monnify gateways for different payment methods.', 'woo-monnify' ),
-				'default'     => '',
-				'desc_tip'    => true,
-				'options'     => array(
-					''  => __( 'Select One', 'woo-monnify' ),
-					'1' => __( '1 gateway', 'woo-monnify' ),
-					'2' => __( '2 gateways', 'woo-monnify' ),
-					'3' => __( '3 gateways', 'woo-monnify' ),
-					'4' => __( '4 gateways', 'woo-monnify' ),
-					'5' => __( '5 gateways', 'woo-monnify' )
-				)
-			),
-			'saved_cards' => array(
-				'title'       => __( 'Saved Cards', 'woo-monnify' ),
-				'label'       => __( 'Enable Payment via Saved Cards', 'woo-monnify' ),
-				'type'        => 'checkbox',
-				'description' => __( 'If enabled, users will be able to pay with a saved card during checkout. Card details are saved on Monnify servers, not on your store.<br>Note that you need to have a valid SSL certificate installed.', 'woo-monnify' ),
-				'default'     => 'no',
-				'desc_tip'    => true
-			)
+			// 'custom_gateways' => array(
+			// 	'title'       => __( 'Additional Monnify Gateways', 'woo-monnify' ),
+			// 	'type'        => 'select',
+			// 	'description' => __( 'Create additional custom Monnify based gateways. This allows you to create additional Monnify gateways for different payment methods.', 'woo-monnify' ),
+			// 	'default'     => '',
+			// 	'desc_tip'    => true,
+			// 	'options'     => array(
+			// 		''  => __( 'Select One', 'woo-monnify' ),
+			// 		'1' => __( '1 gateway', 'woo-monnify' ),
+			// 		'2' => __( '2 gateways', 'woo-monnify' ),
+			// 		'3' => __( '3 gateways', 'woo-monnify' ),
+			// 		'4' => __( '4 gateways', 'woo-monnify' ),
+			// 		'5' => __( '5 gateways', 'woo-monnify' )
+			// 	)
+			// ),
+			// 'saved_cards' => array(
+			// 	'title'       => __( 'Saved Cards', 'woo-monnify' ),
+			// 	'label'       => __( 'Enable Payment via Saved Cards', 'woo-monnify' ),
+			// 	'type'        => 'checkbox',
+			// 	'description' => __( 'If enabled, users will be able to pay with a saved card during checkout. Card details are saved on Monnify servers, not on your store.<br>Note that you need to have a valid SSL certificate installed.', 'woo-monnify' ),
+			// 	'default'     => 'no',
+			// 	'desc_tip'    => true
+			// )
 		);
 
-		if ( 'NGN' !== get_woocommerce_currency() ) {
-			unset( $form_fields['custom_gateways'] );
-		}
+		// if ( 'NGN' !== get_woocommerce_currency() ) {
+		// 	unset( $form_fields['custom_gateways'] );
+		// }
 
 		$this->form_fields = $form_fields;
 	}
@@ -473,11 +475,12 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			return;
 		}
 
-		if ( $this->supports( 'tokenization' ) && is_checkout() && $this->saved_cards && is_user_logged_in() ) {
-			$this->tokenization_script();
-			$this->saved_payment_methods();
-			$this->save_payment_method_checkbox();
-		}
+		//Tokenization is pointless. Card payments not working
+		// if ( $this->supports( 'tokenization' ) && is_checkout() && $this->saved_cards && is_user_logged_in() ) {
+		// 	$this->tokenization_script();
+		// 	$this->saved_payment_methods();
+		// 	$this->save_payment_method_checkbox();
+		// }
 
 	}
 
@@ -600,7 +603,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * @param int $order_id
 	 * @return array|void
 	 */
-	public function process_redirect_payment_option( $order_id ) {}
+	public function process_redirect_payment_option( $order_id ) {
+		//write the code
+	}
 
 	/**
 	 * Load admin scripts.
@@ -677,7 +682,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * @return array
 	 */
 	protected function get_gateway_payment_methods( $order ) {
-		$payment_methods = $this->payment_methods;
+		//Hard Set the payment method because card payments dont work
+		//$payment_methods = $this->payment_methods;
+		$payment_methods = array('ACCOUNT_TRANSFER');
 		if ( empty( $payment_methods ) && ( 'monnify' !== $order->get_payment_method() )){
 			$payment_methods = array('CARD');
 		}

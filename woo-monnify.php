@@ -46,13 +46,19 @@ function nts_wc_monnify_init() {
 
 	require_once __DIR__ . '/includes/class-wc-gateway-monnify-subscriptions.php';
 
-	require_once __DIR__ . '/includes/custom-gateways/class-wc-gateway-custom-monnify.php';
+	
+	/**
+	 * Disabling the custom gateway feature because monnify is 
+	 *currently only reliable with Account transfer payment
+	 *method. This invalidates the need for custom gateway
+	 */
+	//require_once __DIR__ . '/includes/custom-gateways/class-wc-gateway-custom-monnify.php';
 
-	require_once __DIR__ . '/includes/custom-gateways/gateway-one/class-wc-gateway-monnify-one.php';
-	require_once __DIR__ . '/includes/custom-gateways/gateway-two/class-wc-gateway-monnify-two.php';
-	require_once __DIR__ . '/includes/custom-gateways/gateway-three/class-wc-gateway-monnify-three.php';
-	require_once __DIR__ . '/includes/custom-gateways/gateway-four/class-wc-gateway-monnify-four.php';
-	require_once __DIR__ . '/includes/custom-gateways/gateway-five/class-wc-gateway-monnify-five.php';
+	//require_once __DIR__ . '/includes/custom-gateways/gateway-one/class-wc-gateway-monnify-one.php';
+	//require_once __DIR__ . '/includes/custom-gateways/gateway-two/class-wc-gateway-monnify-two.php';
+	//require_once __DIR__ . '/includes/custom-gateways/gateway-three/class-wc-gateway-monnify-three.php';
+	//require_once __DIR__ . '/includes/custom-gateways/gateway-four/class-wc-gateway-monnify-four.php';
+	//require_once __DIR__ . '/includes/custom-gateways/gateway-five/class-wc-gateway-monnify-five.php';
 
 	add_filter( 'woocommerce_payment_gateways', 'nts_wc_add_monnify_gateway', 99 );
 
@@ -89,46 +95,50 @@ function nts_wc_add_monnify_gateway( $methods ) {
 		$methods[] = 'WC_Gateway_Monnify';
 	}
 
-	if ( 'NGN' === get_woocommerce_currency() ) {
+	/**
+	 * Do not include custom gateway in available payment methods
+	 */
 
-		$settings        = get_option( 'woocommerce_monnify_settings', '' );
-		$custom_gateways = isset( $settings['custom_gateways'] ) ? $settings['custom_gateways'] : '';
+	// if ( 'NGN' === get_woocommerce_currency() ) {
 
-		switch ( $custom_gateways ) {
-			case '5':
-				$methods[] = 'WC_Gateway_Monnify_One';
-				$methods[] = 'WC_Gateway_Monnify_Two';
-				$methods[] = 'WC_Gateway_Monnify_Three';
-				$methods[] = 'WC_Gateway_Monnify_Four';
-				$methods[] = 'WC_Gateway_Monnify_Five';
-				break;
-			
-			case '4':
-				$methods[] = 'WC_Gateway_Monnify_One';
-				$methods[] = 'WC_Gateway_Monnify_Two';
-				$methods[] = 'WC_Gateway_Monnify_Three';
-				$methods[] = 'WC_Gateway_Monnify_Four';
-				break;
-			
-			case '3':
-				$methods[] = 'WC_Gateway_Monnify_One';
-				$methods[] = 'WC_Gateway_Monnify_Two';
-				$methods[] = 'WC_Gateway_Monnify_Three';
-				break;
+	// 	$settings        = get_option( 'woocommerce_monnify_settings', '' );
+	// 	$custom_gateways = isset( $settings['custom_gateways'] ) ? $settings['custom_gateways'] : '';
 
-			case '2':
-				$methods[] = 'WC_Gateway_Monnify_One';
-				$methods[] = 'WC_Gateway_Monnify_Two';
-				break;
+	// 	switch ( $custom_gateways ) {
+	// 		case '5':
+	// 			$methods[] = 'WC_Gateway_Monnify_One';
+	// 			$methods[] = 'WC_Gateway_Monnify_Two';
+	// 			$methods[] = 'WC_Gateway_Monnify_Three';
+	// 			$methods[] = 'WC_Gateway_Monnify_Four';
+	// 			$methods[] = 'WC_Gateway_Monnify_Five';
+	// 			break;
 			
-			case '1':
-				$methods[] = 'WC_Gateway_Monnify_One';
-				break;
+	// 		case '4':
+	// 			$methods[] = 'WC_Gateway_Monnify_One';
+	// 			$methods[] = 'WC_Gateway_Monnify_Two';
+	// 			$methods[] = 'WC_Gateway_Monnify_Three';
+	// 			$methods[] = 'WC_Gateway_Monnify_Four';
+	// 			break;
 			
-			default:
-				break;
-		}
-	}
+	// 		case '3':
+	// 			$methods[] = 'WC_Gateway_Monnify_One';
+	// 			$methods[] = 'WC_Gateway_Monnify_Two';
+	// 			$methods[] = 'WC_Gateway_Monnify_Three';
+	// 			break;
+
+	// 		case '2':
+	// 			$methods[] = 'WC_Gateway_Monnify_One';
+	// 			$methods[] = 'WC_Gateway_Monnify_Two';
+	// 			break;
+			
+	// 		case '1':
+	// 			$methods[] = 'WC_Gateway_Monnify_One';
+	// 			break;
+			
+	// 		default:
+	// 			break;
+	// 	}
+	// }
 
 	return $methods;
 }
