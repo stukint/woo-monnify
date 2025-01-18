@@ -206,6 +206,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		$this->sdk_url = 'https://sdk.monnify.com';
 		$this->test_api_url = 'https://sandbox.monnify.com';
 		$this->live_api_url = 'https://api.monnify.com';
+		$this->api_url = $this->testmode ? $this->test_api_url : $this->live_api_url;
 
         // Hooks
 		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
@@ -672,7 +673,21 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		} else {
 			$monnify_txn_ref = false;
 		}
-		wc_get_logger()->debug( $monnify_txn_ref, array( 'source' => 'TXN DEBUG' ) );
+
+		@ob_clean();
+
+		if ( $monnify_txn_ref ) {
+
+			$monnify_response = $this->get_monnify_transaction( $monnify_txn_ref );
+
+			if ( false !== $monnify_response){
+				wc_get_logger()->debug( $monnify_response, array( 'source' => 'TXN RESPONSE' ) );
+			}
+
+		}
+
+		
+		
 	}
 
 	/**
@@ -680,6 +695,36 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 */
 	public function process_webhooks() {
 		//write the code
+	}
+
+	/**
+	 * Retrieve a transaction from Monnify.
+	 *
+	 * @since 5.7.5
+	 * @param $monnify_txn_ref
+	 * @return false|mixed
+	 */
+	private function get_monnify_transaction( $monnify_txn_ref ) {
+		
+		$monnify_url = $this->api_url . '/api/v2/transactions/' . urlencode( $monnify_txn_ref );
+
+		$headers = array(
+			'Authorization' => 'Bearer ' . $this->secret_key,
+		);
+
+		$args = array(
+			'headers' => $headers,
+			'timeout' => 60,
+		);
+
+		$request = wp_remote_get($monnify_url, $args);
+
+		if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
+			return json_decode( wp_remote_retrieve_body($request) );
+		}
+
+		return false;
+
 	}
 
 	/**
