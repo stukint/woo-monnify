@@ -377,7 +377,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				'desc_tip'    => false,
 				'options'     => array(
 					''          => __( 'Select One', 'woo-monnify' ),
-					'inline'    => __( 'SDK', 'woo-monnify' ),
+					'sdk'    => __( 'SDK', 'woo-monnify' ),
 					'redirect'  => __( 'Redirect', 'woo-monnify' )
 				)
 			),
@@ -607,7 +607,78 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * @return array|void
 	 */
 	public function process_redirect_payment_option( $order_id ) {
-		//write the code
+		
+		$order        = wc_get_order( $order_id );
+		$email         = $order->get_billing_email();
+		$first_name	   = $order->get_billing_first_name();
+		$last_name	   = $order->get_billing_last_name();
+		$customer_name = $first_name . ' ' . $last_name;
+		$amount        = $order->get_total();
+		$txnref        = 'MNFY_' . $order_id . '_' . time();
+		$site_name     = get_option( 'blogname' );
+		$payment_descr = 'Payment for ' . $site_name . ' #' . $order_id;
+		$currency      = $order->get_currency();
+		$callback_url = WC()->api_request_url( 'WC_Gateway_Monnify' );
+
+		$monnify_params = array();
+
+		$monnify_params['amount'] = absint($amount);
+		$monnify_params['customerName'] = $customer_name;
+		$monnify_params['customerEmail'] = $email;
+		$monnify_params['paymentReference'] = $txnref;
+		$monnify_params['paymentDescription'] = $payment_descr;
+		$monnify_params['currencyCode'] = $currency;
+		$monnify_params['contractCode'] = $this->contract_code;
+		$monnify_params['redirectUrl'] = $callback_url;
+
+		$payment_methods = $this->get_gateway_payment_methods( $order );
+
+		if(!empty($payment_methods)){
+			$monnify_params['paymentMethods'] = $payment_methods;
+		}
+
+		$order->update_meta_data('_monnify_txn_ref', $txnref);
+		$order->save();
+
+		$access_token = $this->get_monnify_access_token();
+
+		if($access_token){
+			
+			$monnify_url = $this->api_url . '/api/v1/merchant/transactions/init-transaction';
+
+			$headers = array(
+				'Authorization' => 'Bearer ' . $access_token,
+				'Content-Type'  => 'application/json',
+			);
+
+			$args = array(
+				'headers' => $headers,
+				'timeout' => 60,
+				'body'    => json_encode( $monnify_params )
+			);
+
+			$request = wp_remote_post( $monnify_url, $args );
+
+			if ( ! is_wp_error( $request ) && 200 === wp_remote_retrieve_response_code( $request ) ) {
+
+				$monnify_response = json_decode( wp_remote_retrieve_body( $request ) );
+
+				error_log(print_r($monnify_response, true));
+
+				return array(
+					'result'   => 'success',
+					'redirect' => $monnify_response->responseBody->checkoutUrl,
+				);
+
+			}
+
+		}else{
+			
+			wp_redirect( wc_get_page_permalink( 'cart' ) );
+
+			exit;
+		}
+
 	}
 
 	/**
