@@ -784,11 +784,13 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				
 				$order_details = explode( '_', $monnify_txn_ref );
 
-				$order_id = (int) $order_details[1];
+				error_log(print_r($order_details, true));
 
-				$order = wc_get_order( $order_id );
+				//$order_id = (int) $order_details[1];
 
-				$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
+				// $order = wc_get_order( $order_id );
+
+				// $order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
 			}
 
