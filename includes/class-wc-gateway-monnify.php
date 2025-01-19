@@ -770,29 +770,25 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				} else {
 
-	
-
-					$order_details = explode( '_', $_REQUEST['monnify_txnref'] );
+					$order_details = explode( '_', $monnify_txn_ref );
 
 					$order_id = (int) $order_details[1];
 
 					$order = wc_get_order( $order_id );
 
-					$order->update_status( 'failed', __( 'Payment was declined by Monnify.', 'woo-monnify' ) );
+					$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
 				}
 
 			} else {
 				
-				$order_details = explode( '_', $_REQUEST['monnify_txnref'] );
+				$order_details = explode( '_', $monnify_txn_ref );
 
-				error_log(print_r($order_details, true));
+				$order_id = (int) $order_details[1];
 
-				// $order_id = (int) $order_details[1];
+				$order = wc_get_order( $order_id );
 
-				// $order = wc_get_order( $order_id );
-
-				// $order->update_status( 'failed', __( 'Payment was declined by Monnify.', 'woo-monnify' ) );
+				$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
 			}
 
