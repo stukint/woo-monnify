@@ -676,6 +676,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$monnify_txn_ref = false;
 		}
 
+		error_log(print_r($_REQUEST, true));
+
 		@ob_clean();
 
 		if ( $monnify_txn_ref ) {
@@ -784,7 +786,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				
 				//$order_details = explode( '_', $monnify_txn_ref );
 
-				error_log(print_r($monnify_txn_ref, true));
+				// error_log(print_r($_REQUEST['monnify_txnref'], true));
+				// error_log(print_r($_REQUEST['monnify_txnref'], true));
 
 				//$order_id = (int) $order_details[1];
 
