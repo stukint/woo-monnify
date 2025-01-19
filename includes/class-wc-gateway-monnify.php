@@ -782,9 +782,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			} else {
 				
-				$order_details = explode( '_', $monnify_txn_ref );
+				//$order_details = explode( '_', $monnify_txn_ref );
 
-				error_log(print_r($order_details, true));
+				error_log(print_r($monnify_txn_ref, true));
 
 				//$order_id = (int) $order_details[1];
 
