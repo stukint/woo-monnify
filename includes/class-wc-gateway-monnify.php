@@ -682,11 +682,112 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			$monnify_response = $this->get_monnify_transaction( $monnify_txn_ref );
 
-			error_log(print_r($monnify_response, true));
+			if( false !== $monnify_response ){
+
+				if( 'success' == $monnify_response->responseMessage && 'PAID' == $monnify_response->responseBody->paymentStatus){
+
+					$order_details = explode('_', $monnify_response->responseBody->paymentReference);
+					$order_id = (int) $order_details[1];
+					$order = wc_get_order( $order_id );
+
+					if ( in_array( $order->get_status(), array( 'processing', 'completed', 'on-hold' ) ) ) {
+
+						wp_redirect( $this->get_return_url( $order ) );
+
+						exit;
+
+					}
+
+					$order_total      = $order->get_total();
+					$order_currency   = $order->get_currency();
+					$currency_symbol  = get_woocommerce_currency_symbol( $order_currency );
+					$amount_paid 	  = $monnify_response->responseBody->amountPaid;
+					$monnify_ref 	  = $monnify_response->responseBody->paymentReference;
+					$payment_currency = strtoupper( $monnify_response->responseBody->currency );
+					$gateway_symbol   = get_woocommerce_currency_symbol( $payment_currency );
+
+					//Check if amount paid is equal to order amount.
+					if ( $amount_paid < absint($order_total)){
+						
+						$order->update_status( 'on-hold', '' );
+
+						$order->add_meta_data( '_transaction_id', $monnify_ref, true );
+
+						$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment transaction was successful, but the amount paid is not the same as the total order amount.%2$sYour order is currently on hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
+						$notice_type = 'notice';
+
+						// Add Customer Order Note
+						$order->add_order_note( $notice, 1 );
+
+						// Add Admin Order Note
+						$admin_order_note = sprintf( __( '<strong>Look into this order</strong>%1$sThis order is currently on hold.%2$sReason: Amount paid is less than the total order amount.%3$sAmount Paid was <strong>%4$s (%5$s)</strong> while the total order amount is <strong>%6$s (%7$s)</strong>%8$s<strong>Monnify Transaction Reference:</strong> %9$s', 'woo-monnify' ), '<br />', '<br />', '<br />', $currency_symbol, $amount_paid, $currency_symbol, $order_total, '<br />', $monnify_ref );
+						$order->add_order_note( $admin_order_note );
+
+						function_exists( 'wc_reduce_stock_levels' ) ? wc_reduce_stock_levels( $order_id ) : $order->reduce_order_stock();
+
+						wc_add_notice( $notice, $notice_type );
+					} else {
+
+						if ( $payment_currency !== $order_currency ) {
+
+							$order->update_status( 'on-hold', '' );
+
+							$order->update_meta_data( '_transaction_id', $monnify_ref );
+
+							$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment was successful, but the payment currency is different from the order currency.%2$sYour order is currently on-hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
+							$notice_type = 'notice';
+
+							// Add Customer Order Note
+							$order->add_order_note( $notice, 1 );
+
+							// Add Admin Order Note
+							$admin_order_note = sprintf( __( '<strong>Look into this order</strong>%1$sThis order is currently on hold.%2$sReason: Order currency is different from the payment currency.%3$sOrder Currency is <strong>%4$s (%5$s)</strong> while the payment currency is <strong>%6$s (%7$s)</strong>%8$s<strong>Monnify Transaction Reference:</strong> %9$s', 'woo-monnify' ), '<br />', '<br />', '<br />', $order_currency, $currency_symbol, $payment_currency, $gateway_symbol, '<br />', $monnify_ref );
+							$order->add_order_note( $admin_order_note );
+
+							function_exists( 'wc_reduce_stock_levels' ) ? wc_reduce_stock_levels( $order_id ) : $order->reduce_order_stock();
+
+							wc_add_notice( $notice, $notice_type );
+
+						} else {
+
+							$order->payment_complete( $monnify_ref );
+							$order->add_order_note( sprintf( __( 'Payment via Monnify successful (Transaction Reference: %s)', 'woo-monnify' ), $monnify_ref ) );
+
+							if ( $this->is_autocomplete_order_enabled( $order ) ) {
+								$order->update_status( 'completed' );
+							}
+
+						}						
+
+					}
+
+					$order->save();
+
+					WC()->cart->empty_cart();
+
+				} else {
+
+					$order_details = explode( '_', $_REQUEST['monnify_txnref'] );
+
+					$order_id = (int) $order_details[1];
+
+					$order = wc_get_order( $order_id );
+
+					$order->update_status( 'failed', __( 'Payment was declined by Monnify.', 'woo-monnify' ) );
+
+				}
+
+			}
+
+			wp_redirect( $this->get_return_url( $order ) );
+
+			exit;
 
 		}
 
-		
+		wp_redirect( wc_get_page_permalink( 'cart' ) );
+
+		exit;
 		
 	}
 
@@ -767,6 +868,28 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 	}
 
+	/**
+	 * Checks if autocomplete order is enabled for the payment method.
+	 *
+	 * @since 5.7
+	 * @param WC_Order $order Order object.
+	 * @return bool
+	 */
+	protected function is_autocomplete_order_enabled( $order ) {
+		$autocomplete_order = false;
+
+		$payment_method = $order->get_payment_method();
+
+		$monnify_settings = get_option('woocommerce_' . $payment_method . '_settings');
+
+		if ( isset( $monnify_settings['autocomplete_order'] ) && 'yes' === $monnify_settings['autocomplete_order'] ) {
+			$autocomplete_order = true;
+		}
+
+		return $autocomplete_order;
+	}
+
+	
 	/**
 	 * Retrieve the payment channels configured for the gateway
 	 *
