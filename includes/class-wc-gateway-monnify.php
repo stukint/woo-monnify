@@ -676,8 +676,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$monnify_txn_ref = false;
 		}
 
-		error_log(print_r($_REQUEST, true));
-
 		@ob_clean();
 
 		if ( $monnify_txn_ref ) {
@@ -784,16 +782,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			} else {
 				
-				//$order_details = explode( '_', $monnify_txn_ref );
+				wp_redirect( wc_get_page_permalink( 'cart' ) );
 
-				// error_log(print_r($_REQUEST['monnify_txnref'], true));
-				// error_log(print_r($_REQUEST['monnify_txnref'], true));
-
-				//$order_id = (int) $order_details[1];
-
-				// $order = wc_get_order( $order_id );
-
-				// $order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
+				exit;
 
 			}
 
