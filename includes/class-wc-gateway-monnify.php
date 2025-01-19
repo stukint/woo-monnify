@@ -676,6 +676,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$monnify_txn_ref = false;
 		}
 
+		error_log(print_r('monnify_txnref is: ' . $_REQUEST['monnify_txnref'], true));
+		error_log(print_r('transactionReference is: ' . $_REQUEST['transactionReference'], true));
+
 		@ob_clean();
 
 		if ( $monnify_txn_ref ) {
