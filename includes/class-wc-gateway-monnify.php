@@ -763,9 +763,14 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 					$order->save();
 
+					//Cant save card because card payments dont currently work
+					//$this->save_card_details( $monnify_response, $order->get_user_id(), $order_id );
+
 					WC()->cart->empty_cart();
 
 				} else {
+
+					error_log(print_r($monnify_response, true));
 
 					$order_details = explode( '_', $_REQUEST['monnify_txnref'] );
 
