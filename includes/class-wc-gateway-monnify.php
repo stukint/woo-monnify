@@ -741,13 +741,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$monnify_txn_ref = sanitize_text_field( $_REQUEST['monnify_txnref'] );
 		} elseif ( isset( $_REQUEST['transactionReference'] ) ) {
 			$monnify_txn_ref = sanitize_text_field( $_REQUEST['transactionReference'] );
-		} else {
+		} elseif(isset( $_GET['paymentReference'] ) ){
+			$monnify_txn_ref = sanitize_text_field( $_GET['paymentReference'] );
+		}else {
 			$monnify_txn_ref = false;
 		}
-
-		error_log(print_r($_GET['paymentReference'], true));
-
-		//error_log(print_r($_SERVER, true));
 		
 		@ob_clean();
 
