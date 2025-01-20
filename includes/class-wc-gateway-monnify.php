@@ -908,13 +908,15 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		$json = file_get_contents( 'php://input' );
 
 		// validate event do all at once to avoid timing attack.
-		if ( $_SERVER['HTTP_MONNIFY_SIGNATURE'] !== hash_hmac( 'sha512', $this->secret_key, $json ) ) {
-			exit;
-		}
+		// if ( $_SERVER['HTTP_MONNIFY_SIGNATURE'] !== hash_hmac( 'sha512', $this->secret_key, $json ) ) {
+		// 	exit;
+		// }
 
-		$event = json_decode( $json );
+		//$event = json_decode( $json );
 
-		error_log(print_r($event, true));
+		error_log(print_r('Monnify hash is ' . $_SERVER['HTTP_MONNIFY_SIGNATURE'], true));
+
+		error_log(print_r('Computed hash is ' . hash_hmac( 'sha512', $this->secret_key, $json ), true));
 
 
 	}
