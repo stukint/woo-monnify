@@ -1067,18 +1067,23 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		if ( $access_token ){
 
-			$monnify_url = $this->api_url . '/api/v2/transactions/' . urlencode( $monnify_txn_ref );
+			$monnify_url = $this->api_url . '/api/v2/merchant/transactions/query';
 
 			$headers = array(
 				'Authorization' => 'Bearer ' . $access_token,
 			);
 
+			$monnify_params = array();
+
+			$monnify_params['paymentReference'] = $monnify_txn_ref;
+
 			$args = array(
 				'headers' => $headers,
 				'timeout' => 60,
+				'body'    => json_encode( $monnify_params )
 			);
 
-			$request = wp_remote_get($monnify_url, $args);
+			$request = wp_remote_post($monnify_url, $args);
 
 			if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
 				return json_decode( wp_remote_retrieve_body($request) );
