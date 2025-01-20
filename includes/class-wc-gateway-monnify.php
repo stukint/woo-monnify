@@ -1073,7 +1073,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			$monnify_params = array();
 
-			$monnify_params['paymentReference'] = $monnify_txn_ref;
+			if(str_contains($monnify_txn_ref, '|')){
+				$monnify_params['transactionReference'] = $monnify_txn_ref;
+			}else{
+				$monnify_params['paymentReference'] = $monnify_txn_ref;
+			}
 
 			$args = array(
 				'headers' => $headers,
