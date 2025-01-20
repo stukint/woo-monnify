@@ -1081,7 +1081,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				'body'    => json_encode( $monnify_params )
 			);
 
-			$request = wp_remote_post($monnify_url, $args);
+			$request = wp_remote_get($monnify_url, $args);
 
 			error_log(print_r($request, true));
 
