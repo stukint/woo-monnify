@@ -3,7 +3,7 @@
  * Plugin Name: Monnify WooCommerce Payment Gateway
  * Plugin URI: https://monnify.com
  * Description: WooCommerce payment gateway for Monnify
- * Version: 1.0.1
+ * Version: 1.0.1-1
  * Author: Netsave Technologies
  * Author URI: https://www.netsavetech.com.ng
  * License: GPL-2.0+
