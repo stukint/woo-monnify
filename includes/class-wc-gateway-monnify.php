@@ -859,7 +859,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				$order = wc_get_order( $order_id );
 
-				$order->update_status( 'processing', '' );
+				//$order->update_status( 'processing', '' );
 
 				$order->update_meta_data( '_transaction_id', $monnify_txn_ref  );
 
@@ -900,7 +900,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * Process Webhook.
 	 */
 	public function process_webhooks() {
-		//write the code
+		error_log(print_r($_SERVER, true));
+
+		$json = file_get_contents( 'php://input' );
+
+		error_log(print_r('The JSON Object: ' . $json, true));
 	}
 
 	/**
@@ -1033,5 +1037,16 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 	}
 
-	
+	/**
+	 * Check if an order contains a subscription.
+	 *
+	 * @param int $order_id WC Order ID.
+	 *
+	 * @return bool
+	 */
+	public function order_contains_subscription( $order_id ) {
+
+		return function_exists( 'wcs_order_contains_subscription' ) && ( wcs_order_contains_subscription( $order_id ) || wcs_order_contains_renewal( $order_id ) );
+
+	}
 }
