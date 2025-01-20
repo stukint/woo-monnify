@@ -225,6 +225,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
 
+		//Add thank you page
+		add_action('woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page'));
+
 		// Payment listener/API hook.
 		add_action( 'woocommerce_api_wc_gateway_monnify', array( $this, 'verify_monnify_transaction' ) );
 
@@ -733,6 +736,19 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	}
 
 	/**
+	 * Output for the order received page.
+	 */
+	public function thankyou_page($orderid, $message = '')
+	{
+		if ($message) {
+			echo wp_kses_post(wpautop(wptexturize($message)));
+			return;
+		}
+
+		$order = wc_get_order($orderid);
+	}
+
+	/**
 	 * Verify Monnify payment.
 	 */
 	public function verify_monnify_transaction() {
@@ -874,6 +890,10 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				$order->add_order_note( $admin_order_note );
 
 				wc_add_notice( $notice, $notice_type );
+
+				$message = 'Your order is processing. It is currently being verified. Please contact support if your order is not completed after 1 hour';
+
+				$this->thankyou_page($order_id, $message);
 
 				WC()->cart->empty_cart();
 
