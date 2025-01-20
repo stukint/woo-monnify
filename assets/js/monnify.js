@@ -56,7 +56,7 @@ jQuery( function( $ ) {
         let amount = Number( wc_monnify_params.amount );
 
         let monnify_callback = function( transaction ) {
-			$form.append( '<input type="hidden" class="monnify_txnref" name="monnify_txnref" value="' + transaction.paymentReference + '"/>' );
+			$form.append( '<input type="hidden" class="monnify_txnref" name="monnify_txnref" value="' + transaction.transactionReference + '"/>' );
 			monnify_submit = true;
 
 			$form.submit();
