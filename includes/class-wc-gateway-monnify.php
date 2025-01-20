@@ -861,7 +861,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				//$order->update_status( 'processing', '' );
 
-				$order->update_meta_data( '_transaction_id', $monnify_txn_ref  );
+				//$order->update_meta_data( '_transaction_id', $monnify_txn_ref  );
 
 				$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment is being verified.%2$sYour order is currently Processing.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
 				$notice_type = 'notice';
@@ -1082,8 +1082,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			);
 
 			$request = wp_remote_get($monnify_url, $args);
-
-			error_log(print_r($request, true));
 
 			if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
 				return json_decode( wp_remote_retrieve_body($request) );
