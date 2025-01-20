@@ -916,7 +916,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		error_log(print_r('Monnify hash is ' . $_SERVER['HTTP_MONNIFY_SIGNATURE'], true));
 
-		error_log(print_r('Computed hash is ' . hash_hmac( 'sha512', $this->secret_key, $json ), true));
+		error_log(print_r('Computed hash is ' . hash_hmac( 'sha512', $json, $this->secret_key ), true));
 
 
 	}
