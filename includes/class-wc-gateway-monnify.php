@@ -663,8 +663,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				$monnify_response = json_decode( wp_remote_retrieve_body( $request ) );
 
-				error_log(print_r($monnify_response, true));
-
 				return array(
 					'result'   => 'success',
 					'redirect' => $monnify_response->responseBody->checkoutUrl,
@@ -747,9 +745,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$monnify_txn_ref = false;
 		}
 
-		error_log(print_r('monnify_txnref is: ' . $_REQUEST['monnify_txnref'], true));
-		error_log(print_r('transactionReference is: ' . $_REQUEST['transactionReference'], true));
-
+		error_log(print_r($_SERVER, true));
+		
 		@ob_clean();
 
 		if ( $monnify_txn_ref ) {
