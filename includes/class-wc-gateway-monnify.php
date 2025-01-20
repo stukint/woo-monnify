@@ -875,6 +875,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				wc_add_notice( $notice, $notice_type );
 
+				WC()->cart->empty_cart();
+
 
 			} else {
 
