@@ -753,8 +753,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			$monnify_response = $this->get_monnify_transaction( $monnify_txn_ref );
 
-			error_log(print_r($monnify_response, true));
-
 			if( false !== $monnify_response ){
 
 				if( 'success' == $monnify_response->responseMessage && 'PAID' == $monnify_response->responseBody->paymentStatus){
@@ -852,6 +850,33 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 					$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
 				}
+
+			} elseif( isset( $_GET['paymentReference'] ) ){
+
+				$txn_ref = sanitize_text_field( $_GET['paymentReference'] );
+
+				$order_details = explode( '_', $txn_ref );
+
+				$order_id = (int) $order_details[1];
+
+				$order = wc_get_order( $order_id );
+
+				$order->update_status( 'on-hold', '' );
+
+				$order->update_meta_data( '_transaction_id', $txn_ref );
+
+				$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment is being verified.%2$sYour order is currently on-hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
+				$notice_type = 'notice';
+
+				// Add Customer Order Note
+				$order->add_order_note( $notice, 1 );
+
+				// Add Admin Order Note
+				$admin_order_note = sprintf( __( 'Check and verify this order (Transaction Reference: %s)', 'woo-monnify' ), $txn_ref );
+				$order->add_order_note( $admin_order_note );
+
+				wc_add_notice( $notice, $notice_type );
+
 
 			} else {
 
