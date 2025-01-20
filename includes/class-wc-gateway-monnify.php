@@ -900,11 +900,23 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	 * Process Webhook.
 	 */
 	public function process_webhooks() {
-		error_log(print_r($_SERVER, true));
+		
+		if ( ! array_key_exists( 'HTTP_MONNIFY_SIGNATURE', $_SERVER ) || ( strtoupper( $_SERVER['REQUEST_METHOD'] ) !== 'POST' ) ) {
+			exit;
+		}
 
 		$json = file_get_contents( 'php://input' );
 
-		error_log(print_r('The JSON Object: ' . $json, true));
+		// validate event do all at once to avoid timing attack.
+		if ( $_SERVER['HTTP_MONNIFY_SIGNATURE'] !== hash_hmac( 'sha512', $this->secret_key, $json ) ) {
+			exit;
+		}
+
+		$event = json_decode( $json );
+
+		error_log(print_r($event, true));
+
+
 	}
 
 	/**
