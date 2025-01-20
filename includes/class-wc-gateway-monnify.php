@@ -922,6 +922,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		$monnify_response = $this->get_monnify_transaction( $event->eventData->paymentReference );
 
+		error_log(print_r($monnify_response, true));
+
 		if ( false === $monnify_response ) {
 			return;
 		} 
