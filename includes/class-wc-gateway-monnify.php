@@ -922,8 +922,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		$monnify_response = $this->get_monnify_transaction( $event->eventData->paymentReference );
 
-		error_log(print_r($monnify_response, true));
-
 		if ( false === $monnify_response ) {
 			return;
 		} 
@@ -1084,6 +1082,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			);
 
 			$request = wp_remote_post($monnify_url, $args);
+
+			error_log(print_r($request, true));
 
 			if( !is_wp_error($request) && 200 === wp_remote_retrieve_response_code($request) ){
 				return json_decode( wp_remote_retrieve_body($request) );
