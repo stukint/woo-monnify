@@ -863,7 +863,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				$order->update_meta_data( '_transaction_id', $monnify_txn_ref  );
 
-				$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment is being verified.%2$sYour order is currently on-hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
+				$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment is being verified.%2$sYour order is currently Processing.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
 				$notice_type = 'notice';
 
 				// Add Customer Order Note
