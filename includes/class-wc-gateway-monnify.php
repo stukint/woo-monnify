@@ -1078,7 +1078,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$args = array(
 				'headers' => $headers,
 				'timeout' => 60,
-				'body'    => json_encode( $monnify_params )
+				'body'    => $monnify_params
 			);
 
 			$request = wp_remote_get($monnify_url, $args);
