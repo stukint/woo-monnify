@@ -851,19 +851,17 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				}
 
-			} elseif( isset( $_GET['paymentReference'] ) ){
+			} elseif( $monnify_txn_ref ){
 
-				$txn_ref = sanitize_text_field( $_GET['paymentReference'] );
-
-				$order_details = explode( '_', $txn_ref );
+				$order_details = explode( '_', $monnify_txn_ref );
 
 				$order_id = (int) $order_details[1];
 
 				$order = wc_get_order( $order_id );
 
-				$order->update_status( 'on-hold', '' );
+				$order->update_status( 'processing', '' );
 
-				$order->update_meta_data( '_transaction_id', $txn_ref );
+				$order->update_meta_data( '_transaction_id', $monnify_txn_ref  );
 
 				$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment is being verified.%2$sYour order is currently on-hold.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
 				$notice_type = 'notice';
@@ -872,7 +870,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				$order->add_order_note( $notice, 1 );
 
 				// Add Admin Order Note
-				$admin_order_note = sprintf( __( 'Check and verify this order (Transaction Reference: %s)', 'woo-monnify' ), $txn_ref );
+				$admin_order_note = sprintf( __( 'Check and verify this order (Transaction Reference: %s)', 'woo-monnify' ), $monnify_txn_ref );
 				$order->add_order_note( $admin_order_note );
 
 				wc_add_notice( $notice, $notice_type );
