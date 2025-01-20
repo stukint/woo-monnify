@@ -753,6 +753,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			$monnify_response = $this->get_monnify_transaction( $monnify_txn_ref );
 
+			error_log(print_r($monnify_response, true));
+
 			if( false !== $monnify_response ){
 
 				if( 'success' == $monnify_response->responseMessage && 'PAID' == $monnify_response->responseBody->paymentStatus){
@@ -852,8 +854,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				}
 
 			} else {
-				
-				error_log(print_r('Position 1', true));
 
 				wp_redirect( wc_get_page_permalink( 'cart' ) );
 
@@ -866,8 +866,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			exit;
 
 		}
-
-		error_log(print_r('Position 2', true));
 
 		wp_redirect( wc_get_page_permalink( 'cart' ) );
 
