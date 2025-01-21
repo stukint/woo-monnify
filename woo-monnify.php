@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'WC_MONNIFY_MAIN_FILE', __FILE__ );
 define( 'WC_MONNIFY_URL', untrailingslashit( plugins_url( '/', __FILE__ ) ) );
 
-define( 'WC_MONNIFY_VERSION', '1.0.0' );
+define( 'WC_MONNIFY_VERSION', '1.0.1-3' );
 
 /**
  * Initialize Monnify WooCommerce payment gateway.
