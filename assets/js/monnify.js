@@ -85,10 +85,6 @@ jQuery( function( $ ) {
             onLoadStart: ()=>{
             },
             onLoadComplete: ()=>{
-                //let name = $('iframe').html;
-                let name = window.document.getElementById('monnify_app_wrapper').innerHTML;
-                let iframe = name.innerHTML;
-                console.log(iframe);
             },
             onComplete: monnify_callback,
             onClose: ()=>{
