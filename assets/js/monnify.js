@@ -86,7 +86,7 @@ jQuery( function( $ ) {
             },
             onLoadComplete: ()=>{
                 let name = $('#monnify_app_wrapper').find('.merchant-name');
-                console.log();
+                console.log(name);
             },
             onComplete: monnify_callback,
             onClose: ()=>{
