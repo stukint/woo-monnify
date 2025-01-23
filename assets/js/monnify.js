@@ -82,11 +82,11 @@ jQuery( function( $ ) {
             apiKey: wc_monnify_params.apiKey,
             contractCode: wc_monnify_params.contractCode,
             paymentDescription: wc_monnify_params.paymentDescription,
-            onLoadStart: ()=>{
-                console.log('Monnify SDK has started loading');
+            onLoadStart: (data)=>{
+                console.log('Loading Data: '+data);
             },
-            onLoadComplete: ()=>{
-                console.log('Monnify SDK has loaded');
+            onLoadComplete: (data)=>{
+                console.log('Loaded Data: '+data);
             },
             onComplete: monnify_callback,
             onClose: ()=>{
