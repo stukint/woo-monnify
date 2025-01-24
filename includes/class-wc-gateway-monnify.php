@@ -847,7 +847,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 					$order = wc_get_order( $order_id );
 
-					$order->update_status( 'pending-payment', __( 'Monnify payment was declined.', 'woo-monnify' ) );
+					$order->update_status( 'on-hold', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
 				}
 
