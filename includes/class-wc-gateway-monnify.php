@@ -853,7 +853,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 			} elseif( $monnify_txn_ref ){
 
-				error_log(print_r(json_encode($_SERVER), true));
+				error_log(print_r($monnify_txn_ref, true));
 				
 
 				// $order_details = explode( '_', $monnify_txn_ref );
