@@ -847,30 +847,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 					$order = wc_get_order( $order_id );
 
-					$order->update_status( 'on-hold', __( 'Monnify payment was declined.', 'woo-monnify' ) );
+					$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
 				}
 
-			} elseif( $monnify_txn_ref ){
-
-				error_log(print_r($monnify_txn_ref, true));
-				
-
-				// $order_details = explode( '_', $monnify_txn_ref );
-
-				// $order_id = (int) $order_details[1];
-
-				// $order = wc_get_order( $order_id );
-
-				// $order->update_status( 'failed', __( 'Monnify payment was not successful.', 'woo-monnify' ) );
-
-			} else {
-
-				wp_redirect( wc_get_page_permalink( 'cart' ) );
-
-				exit;
-
-			}
+			} 
 
 			wp_redirect( $this->get_return_url( $order ) );
 
