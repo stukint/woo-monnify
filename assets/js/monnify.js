@@ -73,6 +73,24 @@ jQuery( function( $ ) {
 			} );
 		};
 
+        let monnify_close_callback = function(){
+            $form.append( '<input type="hidden" class="monnify_txnref" name="monnify_txnref" value="' + wc_monnify_params.reference + '"/>' );
+			monnify_submit = true;
+
+			$form.submit();
+
+			$( 'body' ).block( {
+				message: null,
+				overlayCSS: {
+					background: '#fff',
+					opacity: 0.6
+				},
+				css: {
+					cursor: "wait"
+				}
+			} );
+        };
+
         let paymentData = {
             amount: amount,
             currency: wc_monnify_params.currency,
@@ -83,16 +101,11 @@ jQuery( function( $ ) {
             contractCode: wc_monnify_params.contractCode,
             paymentDescription: wc_monnify_params.paymentDescription,
             onLoadStart: ()=>{
-                console.log('Monnify SDK has started loading');
             },
             onLoadComplete: ()=>{
-                console.log('Monnify SDK has loaded');
             },
             onComplete: monnify_callback,
-            onClose: ()=>{
-                $( '#wc-monnify-form' ).show();
-				$( this.el ).unblock();
-            }
+            onClose: monnify_close_callback
         }
 
         if ( Array.isArray( wcPaymentMethods() ) && wcPaymentMethods().length ) {
