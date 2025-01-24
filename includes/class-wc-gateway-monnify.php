@@ -859,22 +859,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				$order = wc_get_order( $order_id );
 
-				//$order->update_status( 'processing', '' );
-
-				//$order->update_meta_data( '_transaction_id', $monnify_txn_ref  );
-
-				//$notice      = sprintf( __( 'Thank you for your payment.%1$sYour payment is being verified.%2$sYour order is currently Processing.%3$sKindly contact us for more information regarding your order and payment status.', 'woo-monnify' ), '<br />', '<br />', '<br />' );
-				//$notice_type = 'notice';
-
-				// Add Customer Order Note
-				//$order->add_order_note( $notice, 1 );
-
-				// Add Admin Order Note
-				//$admin_order_note = sprintf( __( 'Check and verify this order (Transaction Reference: %s)', 'woo-monnify' ), $monnify_txn_ref );
-				//$order->add_order_note( $admin_order_note );
-
-				//wc_add_notice( $notice, $notice_type );
-
+				$order->update_status( 'failed', __( 'Monnify payment was not successful.', 'woo-monnify' ) );
 
 			} else {
 
