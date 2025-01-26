@@ -511,13 +511,13 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			return;
 		}
 
-		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+		//$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		wp_enqueue_script( 'jquery' );
 
-		wp_enqueue_script('monnify', $this->sdk_url . '/plugin/monnify.js', array( 'jquery' ), WC_MONNIFY_VERSION, false );
+		//wp_enqueue_script('monnify', $this->sdk_url . '/plugin/monnify.js', array( 'jquery' ), WC_MONNIFY_VERSION, false );
 
-		wp_enqueue_script( 'wc_monnify', plugins_url( 'assets/js/monnify' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array( 'jquery', 'monnify' ), WC_MONNIFY_VERSION, false );
+		//wp_enqueue_script( 'wc_monnify', plugins_url( 'assets/js/monnify' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array( 'jquery', 'monnify' ), WC_MONNIFY_VERSION, false );
 
 		$monnify_params = array(
 			'apiKey' => $this->api_key,
@@ -573,7 +573,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			}
 		}
 
-		wp_localize_script( 'wc_monnify', 'wc_monnify_params', $monnify_params );
+		echo '<div id="test-iframe"><iframe></iframe></div>';
+
+		//wp_localize_script( 'wc_monnify', 'wc_monnify_params', $monnify_params );
 
 	}
 
