@@ -574,10 +574,10 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		}
 
 		//$inc_path = WP_PLUGIN_DIR . '/includes';
-		$inc_path = plugins_url('', 'woo-monnify') . '/includes';
+		$pay_script = plugins_url( 'includes/monnify-pay.php', WC_MONNIFY_MAIN_FILE );
 
 		echo '<div id="test-iframe">';
-		echo '<iframe src="' . $inc_path . '/monnify-pay.php"></iframe>';
+		echo '<iframe src="'.$pay_script.'"></iframe>';
 		echo '</div>';
 
 		//wp_localize_script( 'wc_monnify', 'wc_monnify_params', $monnify_params );
