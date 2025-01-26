@@ -903,11 +903,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			return;
 		}
 
-		$monnify_txn_ref = $order->get_meta( '_monnify_txn_ref' );
+		// $monnify_txn_ref = $order->get_meta( '_monnify_txn_ref' );
 
-		if ($monnify_response->responseBody->paymentReference != $monnify_txn_ref){
-			exit;
-		}
+		// if ($monnify_response->responseBody->paymentReference != $monnify_txn_ref){
+		// 	exit;
+		// }
 
 		http_response_code( 200 );
 
