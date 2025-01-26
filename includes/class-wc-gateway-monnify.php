@@ -574,7 +574,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		}
 
 		//$inc_path = WP_PLUGIN_DIR . '/includes';
-		$inc_path = plugins_url() . '/includes';
+		$inc_path = plugins_url('', 'woo-monnify') . '/includes';
 
 		echo '<div id="test-iframe">';
 		echo '<iframe src="' . $inc_path . '/monnify-pay.php"></iframe>';
