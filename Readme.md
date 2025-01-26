@@ -1,1 +1,1 @@
-Woocommerce plugin for Monnify Payment Gateways V1.0.2
+Woocommerce plugin for Monnify Payment Gateways V2.0.0
