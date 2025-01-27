@@ -584,6 +584,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 					$monnify_response = json_decode( wp_remote_retrieve_body( $request ) );
 
+					error_log(print_r($monnify_response, true));
+
 					return array(
 						'result'   => 'success',
 						'redirect' => $monnify_response->responseBody->checkoutUrl,
