@@ -520,7 +520,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		//wp_enqueue_script( 'wc_monnify', plugins_url( 'assets/js/monnify' . $suffix . '.js', WC_MONNIFY_MAIN_FILE ), array( 'jquery', 'monnify' ), WC_MONNIFY_VERSION, false );
 
 		$monnify_params = array(
-			'apiKey' => $this->api_key,
 			'contractCode' => $this->contract_code
 		);
 
@@ -537,40 +536,61 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$the_order_id  = $order->get_id();
 			$the_order_key = $order->get_order_key();
 			$currency      = $order->get_currency();
+			$callback_url = WC()->api_request_url( 'WC_Gateway_Monnify' );
 
 			if ( $the_order_id == $order_id && $the_order_key == $order_key ) {
 
-				$monnify_params['amount'] = $amount;
-				$monnify_params['currency'] = $currency;
-				$monnify_params['reference'] = $txnref;
-				$monnify_params['customerFullName'] = $customer_name;
+				$monnify_params['amount'] = absint($amount);
+				$monnify_params['customerName'] = $customer_name;
 				$monnify_params['customerEmail'] = $email;
+				$monnify_params['paymentReference'] = $txnref;
 				$monnify_params['paymentDescription'] = $payment_descr;
+				$monnify_params['currencyCode'] = $currency;
+				$monnify_params['redirectUrl'] = $callback_url;
+
+				$payment_methods = $this->get_gateway_payment_methods( $order );
+
+				if(!empty($payment_methods)){
+					$monnify_params['paymentMethods'] = $payment_methods;
+				}
 
 			}
 
 			$order->update_meta_data('_monnify_txn_ref', $txnref);
 			$order->save();
-		}
 
-		$payment_methods = $this->get_gateway_payment_methods( $order );
+			$access_token = $this->get_monnify_access_token();
 
-		if ( !empty( $payment_methods ) ){
-			if ( in_array( 'CARD', $payment_methods, true ) ){
-				$monnify_params['card_method'] = 'true';
+			if($access_token){
+
+				$monnify_url = $this->api_url . '/api/v1/merchant/transactions/init-transaction';
+
+				$headers = array(
+					'Authorization' => 'Bearer ' . $access_token,
+					'Content-Type'  => 'application/json',
+				);
+
+				$args = array(
+					'headers' => $headers,
+					'timeout' => 60,
+					'body'    => json_encode( $monnify_params )
+				);
+
+				$request = wp_remote_post( $monnify_url, $args );
+
+				if ( ! is_wp_error( $request ) && 200 === wp_remote_retrieve_response_code( $request ) ) {
+
+					$monnify_response = json_decode( wp_remote_retrieve_body( $request ) );
+
+					return array(
+						'result'   => 'success',
+						'redirect' => $monnify_response->responseBody->checkoutUrl,
+					);
+
+				}
+
 			}
 
-			if ( in_array( 'ACCOUNT_TRANSFER', $payment_methods, true ) ){
-				$monnify_params['account_transfer_method'] = 'true';
-			}
-
-			if ( in_array( 'USSD', $payment_methods, true ) ){
-				$monnify_params['ussd_method'] = 'true';
-			}
-
-			if ( in_array( 'PHONE_NUMBER', $payment_methods, true ) ){
-				$monnify_params['phone_number_method'] = 'true';
-			}
 		}
 
 		//$inc_path = WP_PLUGIN_DIR . '/includes';
