@@ -559,7 +559,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			$order->update_meta_data('_monnify_txn_ref', $txnref);
 			$order->save();
 
-			$access_token = $this->get_monnify_access_token();
+		}
+
+		$access_token = $this->get_monnify_access_token();
 
 			if($access_token){
 
@@ -589,9 +591,12 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 				}
 
+			}else{
+			
+				wp_redirect( wc_get_page_permalink( 'cart' ) );
+	
+				exit;
 			}
-
-		}
 
 		//$inc_path = WP_PLUGIN_DIR . '/includes';
 		$pay_script = plugins_url( 'includes/monnify-pay.php', WC_MONNIFY_MAIN_FILE );
