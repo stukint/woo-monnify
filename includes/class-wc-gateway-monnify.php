@@ -561,51 +561,56 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		}
 
+		$checkout_url = null;
+
 		$access_token = $this->get_monnify_access_token();
 
-			if($access_token){
+		if($access_token){
 
-				$monnify_url = $this->api_url . '/api/v1/merchant/transactions/init-transaction';
+			$monnify_url = $this->api_url . '/api/v1/merchant/transactions/init-transaction';
 
-				$headers = array(
-					'Authorization' => 'Bearer ' . $access_token,
-					'Content-Type'  => 'application/json',
-				);
+			$headers = array(
+				'Authorization' => 'Bearer ' . $access_token,
+				'Content-Type'  => 'application/json',
+			);
 
-				$args = array(
-					'headers' => $headers,
-					'timeout' => 60,
-					'body'    => json_encode( $monnify_params )
-				);
+			$args = array(
+				'headers' => $headers,
+				'timeout' => 60,
+				'body'    => json_encode( $monnify_params )
+			);
 
-				$request = wp_remote_post( $monnify_url, $args );
+			$request = wp_remote_post( $monnify_url, $args );
 
-				if ( ! is_wp_error( $request ) && 200 === wp_remote_retrieve_response_code( $request ) ) {
+			if ( ! is_wp_error( $request ) && 200 === wp_remote_retrieve_response_code( $request ) ) {
 
-					$monnify_response = json_decode( wp_remote_retrieve_body( $request ) );
+				$monnify_response = json_decode( wp_remote_retrieve_body( $request ) );
 
-					error_log(print_r($monnify_response, true));
+				$checkout_url = $monnify_response->responseBody->checkoutUrl;
 
-					return array(
-						'result'   => 'success',
-						'redirect' => $monnify_response->responseBody->checkoutUrl,
-					);
-
-				}
-
-			}else{
-			
-				wp_redirect( wc_get_page_permalink( 'cart' ) );
-	
-				exit;
 			}
 
-		//$inc_path = WP_PLUGIN_DIR . '/includes';
-		$pay_script = plugins_url( 'includes/monnify-pay.php', WC_MONNIFY_MAIN_FILE );
+		}else{
+			
+			wp_redirect( wc_get_page_permalink( 'cart' ) );
+	
+			exit;
+		}
 
-		echo '<div id="test-iframe">';
-		echo '<iframe src="'.$pay_script.'"></iframe>';
-		echo '</div>';
+		if($checkout_url){
+			
+			$pay_script = plugins_url( 'includes/monnify-pay.php', WC_MONNIFY_MAIN_FILE );
+
+			echo '<div id="monnify_app_wrapper" class="monnify_wrapper">';
+			echo '<iframe width="100%" height="100%" allow="geolocation;clipboard-write" style="border:0px !important;" class="monnify-frame" src="'.$pay_script.'?monnify_checkout='.$checkout_url.'"></iframe>';
+			echo '</div>';
+		}else{
+
+			wp_redirect( wc_get_page_permalink( 'cart' ) );
+	
+			exit;
+
+		}
 
 		//wp_localize_script( 'wc_monnify', 'wc_monnify_params', $monnify_params );
 
