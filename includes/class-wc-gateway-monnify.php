@@ -136,6 +136,20 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	public $api_url;
 
 	/**
+	 * Message to output when order is complete.
+	 *
+	 * @var string
+	 */
+	public $order_complete_message;
+
+	/**
+	 * Message to output when order failed.
+	 *
+	 * @var string
+	 */
+	public $order_failed_message;
+
+	/**
 	 * Gateway disabled message
 	 *
 	 * @var string
@@ -196,6 +210,9 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
         $this->live_secret_key = $this->get_option('live_secret_key');
         $this->live_contract_code = $this->get_option('live_contract_code');
 
+		$this->order_complete_message = $this->get_option('order_complete_message');
+		$this->order_failed_message = $this->get_option('order_failed_message');
+
         //Card payments not working
 		//$this->saved_cards = $this->get_option( 'saved_cards' ) === 'yes' ? true : false;
 
@@ -224,6 +241,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		);
 
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page' ) );
 
 		// Payment listener/API hook.
 		add_action( 'woocommerce_api_wc_gateway_monnify', array( $this, 'verify_monnify_transaction' ) );
@@ -415,6 +433,18 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				'title'       => __( 'Live Contract Code', 'woo-monnify' ),
 				'type'        => 'text',
 				'description' => __( 'Enter your Live Contract Code here.', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'order_complete_message' => array(
+				'title'       => __( 'Order Complete Message', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'Enter message to output when order is completed .', 'woo-monnify' ),
+				'default'     => ''
+			),
+			'order_failed_message' => array(
+				'title'       => __( 'Order Failed Message', 'woo-monnify' ),
+				'type'        => 'text',
+				'description' => __( 'Enter message to output when order fails .', 'woo-monnify' ),
 				'default'     => ''
 			),
 			'autocomplete_order' => array(
@@ -731,6 +761,33 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		echo '</div>';
 	}
+
+	/**
+	 * Display message on thank you page.
+	 */
+	public function thankyou_page( $order_id ){
+
+		$order = wc_get_order( $order_id );
+
+		if($order->get_status() == 'failed'){
+			if ($this->order_failed_message){
+				echo wp_kses_post(wpautop(wptexturize($this->order_failed_message)));
+				return;
+			}
+			return;
+		}
+
+		if($order->get_status() == 'completed' || $order->get_status() == 'processing'){
+			if ($this->order_complete_message){
+				echo wp_kses_post(wpautop(wptexturize($this->order_complete_message)));
+				return;
+			}
+			return;
+		}
+		
+
+	}
+
 
 	/**
 	 * Verify Monnify payment.
