@@ -849,6 +849,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 					$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
 
+					wc_add_notice('We cannot verify your order at this time. Please wait 30mins and refresh page before trying again.', 'notice');
+
 				}
 
 			} 
