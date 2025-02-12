@@ -224,6 +224,7 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		);
 
 		add_action( 'woocommerce_receipt_' . $this->id, array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_thankyou_' . $this->id, array($this, 'thankyou_page' ) );
 
 		// Payment listener/API hook.
 		add_action( 'woocommerce_api_wc_gateway_monnify', array( $this, 'verify_monnify_transaction' ) );
@@ -733,6 +734,20 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 	}
 
 	/**
+	 * Display message on thank you page.
+	 */
+	public function thankyou_page( $order_id ){
+
+		$order = wc_get_order( $order_id );
+
+		if($order->get_status() == 'failed'){
+			echo wp_kses_post(wpautop(wptexturize('We cannot verify your order at this time. Please wait 30mins then refresh page before trying again or contact support.')));
+			return;
+		}
+	}
+
+
+	/**
 	 * Verify Monnify payment.
 	 */
 	public function verify_monnify_transaction() {
@@ -848,12 +863,6 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 					$order = wc_get_order( $order_id );
 
 					$order->update_status( 'failed', __( 'Monnify payment was declined.', 'woo-monnify' ) );
-
-					wc_add_notice('We cannot verify your order at this time. Please wait 30mins and refresh page before trying again.', 'notice');
-
-					wp_redirect( wc_get_checkout_url() );
-					
-					exit;
 
 				}
 
