@@ -852,6 +852,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 					wc_add_notice('We cannot verify your order at this time. Please wait 30mins and refresh page before trying again.', 'notice');
 
 					wp_redirect( $order->get_checkout_payment_url( true ) );
+					
+					exit;
 
 				}
 
