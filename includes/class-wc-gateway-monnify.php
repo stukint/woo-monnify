@@ -770,12 +770,22 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 		$order = wc_get_order( $order_id );
 
 		if($order->get_status() == 'failed'){
-			echo wp_kses_post(wpautop(wptexturize($this->order_failed_message)));
-			return;
-		}else{
-			echo wp_kses_post(wpautop(wptexturize($this->order_complete_message)));
+			if ($this->order_failed_message){
+				echo wp_kses_post(wpautop(wptexturize($this->order_failed_message)));
+				return;
+			}
 			return;
 		}
+
+		if($order->get_status() == 'completed' || $order->get_status() == 'processing'){
+			if ($this->order_complete_message){
+				echo wp_kses_post(wpautop(wptexturize($this->order_complete_message)));
+				return;
+			}
+			return;
+		}
+		
+
 	}
 
 
