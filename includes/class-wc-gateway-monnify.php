@@ -773,8 +773,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 			if ($this->order_failed_message){
 				$text = wptexturize($this->order_failed_message);
 				$ptext = wpautop($text);
-				$htext = str_replace('<p>', '<h3>', $ptext);
-				$h3text = str_replace('</p>', '</h3>', $htext);
+				$htext = str_replace('<p>', '<h4>', $ptext);
+				$h3text = str_replace('</p>', '</h4>', $htext);
 				echo wp_kses_post($h3text);
 				return;
 			}
