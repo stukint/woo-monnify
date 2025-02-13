@@ -774,8 +774,8 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 				$text = wptexturize($this->order_failed_message);
 				$ptext = wpautop($text);
 				$htext = str_replace('<p>', '<h6>', $ptext);
-				$h3text = str_replace('</p>', '</h6>', $htext);
-				echo wp_kses_post($h3text);
+				$h6text = str_replace('</p>', '</h6>', $htext);
+				echo wp_kses_post($h6text);
 				return;
 			}
 			return;
@@ -783,7 +783,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		if($order->get_status() == 'completed' || $order->get_status() == 'processing'){
 			if ($this->order_complete_message){
-				echo wp_kses_post(wpautop(wptexturize($this->order_complete_message)));
+				$text = wptexturize($this->order_complete_message);
+				$ptext = wpautop($text);
+				$htext = str_replace('<p>', '<h6>', $ptext);
+				$h6text = str_replace('</p>', '</h6>', $htext);
+				echo wp_kses_post($h6text);
 				return;
 			}
 			return;
