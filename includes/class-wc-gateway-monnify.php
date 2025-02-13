@@ -771,7 +771,11 @@ class WC_Gateway_Monnify extends WC_Payment_Gateway_CC {
 
 		if($order->get_status() == 'failed'){
 			if ($this->order_failed_message){
-				echo wp_kses_post(wpautop(wptexturize($this->order_failed_message)));
+				$text = wptexturize($this->order_failed_message);
+				$ptext = wpautop($text);
+				$htext = str_replace('<p>', '<h3>', $ptext);
+				$h3text = str_replace('</p>', '</h3>', $htext);
+				echo wp_kses_post($h3text);
 				return;
 			}
 			return;
