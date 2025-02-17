@@ -66,7 +66,7 @@ class WC_Gateway_Monnify_Subscriptions extends WC_Gateway_Monnify {
 
 		if ( is_wp_error( $response ) ) {
 
-			$renewal_order->update_status( 'failed', sprintf( __( 'Monnify Transaction Failed (%s)', 'woo-paystack' ), $response->get_error_message() ) );
+			$renewal_order->update_status( 'failed', sprintf( __( 'Monnify Transaction Failed (%s)', 'woo-monnify' ), $response->get_error_message() ) );
 
 		}
 
